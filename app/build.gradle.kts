@@ -36,23 +36,23 @@ android {
         includeInBundle = false
     }
     signingConfigs {
-        release {
+        create("release") {
             if (System.getenv("KEYSTORE_PATH") != null) {
                 storeFile = file(System.getenv("KEYSTORE_PATH"))
                 storePassword = System.getenv("KEYSTORE_PASSWORD")
-                storeType = 'PKCS12'
+                storeType = "PKCS12"
                 keyAlias = System.getenv("KEY_ALIAS")
                 keyPassword = System.getenv("KEY_PASSWORD")
             }
         }
     }
     buildTypes {
-        release {
+        getByName("release") {
             applicationIdSuffix = getGitUserSuffix()
-            signingConfig = signingConfigs.release
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
         }
-        debug {
+        getByName("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             isMinifyEnabled = false
