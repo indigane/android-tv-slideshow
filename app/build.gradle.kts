@@ -75,6 +75,12 @@ dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("com.google.android.material:material:1.12.0")
 
+    // For modern SMB (Samba) connectivity
+    implementation("com.hierynomus:smbj:0.11.5")
+
+    // For efficient image loading and caching
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
