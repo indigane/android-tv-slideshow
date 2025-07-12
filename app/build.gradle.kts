@@ -81,6 +81,9 @@ dependencies {
     // For efficient image loading and caching
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
+    // Android TV Leanback library for UI components and themes
+    implementation("androidx.leanback:leanback:1.0.0")
+
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
