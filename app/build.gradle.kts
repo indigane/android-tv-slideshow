@@ -19,10 +19,10 @@ fun getGitUserSuffix(): String {
 }
 
 android {
-    namespace = "home.replace_me"
+    namespace = "home.photo_slideshow"
     compileSdk = 35
     defaultConfig {
-        applicationId = "home.replace_me"
+        applicationId = "home.photo_slideshow"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
