@@ -1,3 +1,16 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.TimeZone
+
+fun getMinutesSinceEpoch(): Int {
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    sdf.timeZone = TimeZone.getTimeZone("UTC")
+    val epoch = sdf.parse("2025-07-13T00:00:00Z")
+    val now = Date()
+    val diff = now.time - epoch.time
+    return (diff / (60 * 1000)).toInt()
+}
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -25,7 +38,7 @@ android {
         applicationId = "home.photo_slideshow"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        versionCode = if (gradle.startParameter.taskNames.any { it.contains("Debug") }) getMinutesSinceEpoch() else 1
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
