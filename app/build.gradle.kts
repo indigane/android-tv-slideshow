@@ -14,6 +14,7 @@ fun getMinutesSinceEpoch(): Int {
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 fun getGitUserSuffix(): String {
@@ -99,7 +100,7 @@ dependencies {
 
     // For efficient image loading and caching
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
 
     // Android TV Leanback library for UI components and themes

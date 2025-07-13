@@ -67,14 +67,17 @@ class SambaRepository {
         share?.let {
             for (fileId in it.list(path)) {
                 val fileName = fileId.fileName
-                val newPath = if (path.isEmpty()) fileName else "$path\\$fileName"
+                val newPath = if (path.isEmpty()) fileName else "$path/$fileName"
                 if (fileId.fileAttributes and 16L > 0) { // DIRECTORY
                     if (fileName != "." && fileName != "..") {
                         recursiveSearch(newPath, photoList)
                     }
                 } else {
                     if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
-                        photoList.add("smb://${connection?.remoteHostname}/${share?.smbPath.toString().replace("\\", "/")}/$newPath")
+                        val remoteHost = connection?.remoteHostname
+                        val sharePath = share?.smbPath?.toString()?.replace("\\", "/")
+                        val fullPath = "smb://$remoteHost/$sharePath/$newPath"
+                        photoList.add(fullPath)
                     }
                 }
             }
