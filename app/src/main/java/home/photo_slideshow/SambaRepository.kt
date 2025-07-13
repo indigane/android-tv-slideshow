@@ -74,9 +74,8 @@ class SambaRepository {
                     }
                 } else {
                     if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
-                        val remoteHost = connection?.remoteHostname
-                        val sharePath = share?.smbPath?.toString()?.replace("\\", "/")
-                        val fullPath = "smb://$remoteHost/$sharePath/$newPath"
+                        val sharePath = share?.smbPath?.toString()?.replace("\\", "/")?.trimEnd('/')
+                        val fullPath = "smb:/$sharePath/$newPath"
                         photoList.add(fullPath)
                     }
                 }
@@ -90,7 +89,7 @@ class SambaRepository {
             val file = share?.openFile(
                 smbPath,
                 setOf(com.hierynomus.msdtyp.AccessMask.GENERIC_READ),
-                setOf(),
+                setOf(com.hierynomus.msfscc.FileAttributes.FILE_ATTRIBUTE_NORMAL),
                 setOf(com.hierynomus.mssmb2.SMB2ShareAccess.FILE_SHARE_READ),
                 com.hierynomus.mssmb2.SMB2CreateDisposition.FILE_OPEN,
                 setOf()
