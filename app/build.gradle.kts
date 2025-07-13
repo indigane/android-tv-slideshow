@@ -81,6 +81,11 @@ android {
     buildFeatures {
         viewBinding = true // Enable ViewBinding for easier UI interaction
     }
+    packaging {
+        resources {
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+        }
+    }
 }
 
 dependencies {
@@ -89,13 +94,15 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
 
     // For modern SMB (Samba) connectivity
-    implementation("com.hierynomus:smbj:0.11.5")
+    implementation("com.hierynomus:smbj:0.14.0")
 
     // For efficient image loading and caching
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
 
     // Android TV Leanback library for UI components and themes
-    implementation("androidx.leanback:leanback:1.0.0")
+    implementation("androidx.leanback:leanback:1.2.0")
 
     // Testing libraries
     testImplementation("junit:junit:4.13.2")

@@ -8,36 +8,94 @@ import com.hierynomus.smbj.session.Session
 import com.hierynomus.smbj.share.DiskShare
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.InputStream
 
 class SambaRepository {
 
-    suspend fun fetchPhotoList(
+    private var connection: Connection? = null
+    private var session: Session? = null
+    private var share: DiskShare? = null
+
+    companion object {
+        @Volatile
+        private var INSTANCE: SambaRepository? = null
+
+        fun getInstance(): SambaRepository =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: SambaRepository().also { INSTANCE = it }
+            }
+    }
+
+    suspend fun connect(
         server: String,
-        share: String,
+        shareName: String,
         user: String,
-        pass: String,
-        callback: (Result<List<String>>) -> Unit
-    ) {
-        withContext(Dispatchers.IO) {
+        pass: String
+    ): Result<Unit> {
+        return withContext(Dispatchers.IO) {
             try {
                 val client = SMBClient()
-                val connection: Connection = client.connect(server)
+                connection = client.connect(server)
                 val ac = AuthenticationContext(user, pass.toCharArray(), null)
-                val session: Session = connection.authenticate(ac)
-                val share = session.connectShare(share) as DiskShare
+                session = connection?.authenticate(ac)
+                share = session?.connectShare(shareName) as DiskShare
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Log.e("SambaRepository", "Error connecting to share", e)
+                Result.failure(e)
+            }
+        }
+    }
 
+    suspend fun fetchPhotoList(
+        path: String
+    ): Result<List<String>> {
+        return withContext(Dispatchers.IO) {
+            try {
                 val photoList = mutableListOf<String>()
-                for (fileId in share.list("", "*.*")) {
-                    val fileName = fileId.fileName
-                    if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
-                        photoList.add(fileName)
-                    }
-                }
-                callback(Result.success(photoList))
+                val root = if (path.isEmpty()) "" else path
+                recursiveSearch(root, photoList)
+                Result.success(photoList)
             } catch (e: Exception) {
                 Log.e("SambaRepository", "Error fetching photo list", e)
-                callback(Result.failure(e))
+                Result.failure(e)
             }
+        }
+    }
+
+    private fun recursiveSearch(path: String, photoList: MutableList<String>) {
+        share?.let {
+            for (fileId in it.list(path)) {
+                val fileName = fileId.fileName
+                val newPath = if (path.isEmpty()) fileName else "$path\\$fileName"
+                if (fileId.fileAttributes and 16L > 0) { // DIRECTORY
+                    if (fileName != "." && fileName != "..") {
+                        recursiveSearch(newPath, photoList)
+                    }
+                } else {
+                    if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
+                        photoList.add("smb://${connection?.remoteHostname}/${share?.smbPath.toString().replace("\\", "/")}/$newPath")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getInputStream(path: String): InputStream? {
+        return try {
+            val smbPath = path.substringAfter("smb://${connection?.remoteHostname}/${share?.smbPath.toString().replace("\\", "/")}/")
+            val file = share?.openFile(
+                smbPath,
+                setOf(com.hierynomus.msdtyp.AccessMask.GENERIC_READ),
+                setOf(),
+                setOf(com.hierynomus.mssmb2.SMB2ShareAccess.FILE_SHARE_READ),
+                com.hierynomus.mssmb2.SMB2CreateDisposition.FILE_OPEN,
+                setOf()
+            )
+            file?.inputStream
+        } catch (e: Exception) {
+            Log.e("SambaRepository", "Error getting input stream", e)
+            null
         }
     }
 }
