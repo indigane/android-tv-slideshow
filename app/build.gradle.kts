@@ -83,6 +83,7 @@ android {
     }
     packaging {
         resources {
+            // Exclude duplicate file found in bcprov-jdk18on and jspecify dependencies.
             excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
         }
     }
