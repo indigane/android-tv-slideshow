@@ -30,12 +30,13 @@ class SambaRepository {
         server: String,
         shareName: String,
         user: String,
-        pass: String
+        pass: String,
+        port: Int = 445
     ): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
                 val client = SMBClient()
-                connection = client.connect(server)
+                connection = client.connect(server, port)
                 val ac = AuthenticationContext(user, pass.toCharArray(), null)
                 session = connection?.authenticate(ac)
                 share = session?.connectShare(shareName) as DiskShare
