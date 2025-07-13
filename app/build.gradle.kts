@@ -19,10 +19,10 @@ fun getGitUserSuffix(): String {
 }
 
 android {
-    namespace = "com.example.sambavideoplayer"
+    namespace = "home.photo_slideshow"
     compileSdk = 35
     defaultConfig {
-        applicationId = "com.example.sambavideoplayer"
+        applicationId = "home.photo_slideshow"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

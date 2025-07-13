@@ -1,4 +1,4 @@
-package com.example.sambavideoplayer
+package home.photo_slideshow
 
 import android.os.Bundle
 import android.util.Log

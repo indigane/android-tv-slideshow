@@ -1,4 +1,4 @@
-package com.example.sambavideoplayer
+package home.photo_slideshow
 
 import android.util.Log
 import com.hierynomus.smbj.SMBClient
