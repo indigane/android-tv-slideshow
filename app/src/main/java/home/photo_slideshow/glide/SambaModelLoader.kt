@@ -9,14 +9,11 @@ import java.io.InputStream
 class SambaModelLoader : ModelLoader<String, InputStream> {
 
     override fun buildLoadData(model: String, width: Int, height: Int, options: Options): ModelLoader.LoadData<InputStream>? {
-        if (!model.startsWith("smb://")) {
-            return null
-        }
         return ModelLoader.LoadData(SambaSignature(model), SambaDataFetcher(model))
     }
 
     override fun handles(model: String): Boolean {
-        return model.startsWith("smb://")
+        return true
     }
 
     class Factory : ModelLoaderFactory<String, InputStream> {

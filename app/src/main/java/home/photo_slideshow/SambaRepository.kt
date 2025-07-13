@@ -74,9 +74,7 @@ class SambaRepository {
                     }
                 } else {
                     if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
-                        val sharePath = share?.smbPath?.toString()?.replace("\\", "/")?.trimStart('/')?.trimEnd('/')
-                        val fullPath = "smb://$sharePath/$newPath"
-                        photoList.add(fullPath)
+                        photoList.add(newPath)
                     }
                 }
             }
@@ -85,9 +83,8 @@ class SambaRepository {
 
     fun getInputStream(path: String): InputStream? {
         return try {
-            val smbPath = path.substringAfter("smb://${connection?.remoteHostname}/${share?.smbPath.toString().replace("\\", "/")}/")
             val file = share?.openFile(
-                smbPath,
+                path,
                 setOf(com.hierynomus.msdtyp.AccessMask.GENERIC_READ),
                 null,
                 setOf(com.hierynomus.mssmb2.SMB2ShareAccess.FILE_SHARE_READ),
