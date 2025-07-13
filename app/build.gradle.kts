@@ -19,10 +19,10 @@ fun getGitUserSuffix(): String {
 }
 
 android {
-    namespace = "home.replace_me"
+    namespace = "home.photo_slideshow"
     compileSdk = 35
     defaultConfig {
-        applicationId = "home.replace_me"
+        applicationId = "home.photo_slideshow"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -36,23 +36,23 @@ android {
         includeInBundle = false
     }
     signingConfigs {
-        release {
+        create("release") {
             if (System.getenv("KEYSTORE_PATH") != null) {
                 storeFile = file(System.getenv("KEYSTORE_PATH"))
                 storePassword = System.getenv("KEYSTORE_PASSWORD")
-                storeType = 'PKCS12'
+                storeType = "PKCS12"
                 keyAlias = System.getenv("KEY_ALIAS")
                 keyPassword = System.getenv("KEY_PASSWORD")
             }
         }
     }
     buildTypes {
-        release {
+        getByName("release") {
             applicationIdSuffix = getGitUserSuffix()
-            signingConfig = signingConfigs.release
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
         }
-        debug {
+        getByName("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             isMinifyEnabled = false
@@ -74,6 +74,15 @@ dependencies {
     // Core libraries
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("com.google.android.material:material:1.12.0")
+
+    // For modern SMB (Samba) connectivity
+    implementation("com.hierynomus:smbj:0.11.5")
+
+    // For efficient image loading and caching
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // Android TV Leanback library for UI components and themes
+    implementation("androidx.leanback:leanback:1.0.0")
 
     // Testing libraries
     testImplementation("junit:junit:4.13.2")

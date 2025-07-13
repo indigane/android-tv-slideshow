@@ -1,1 +1,1 @@
-# Replace me
+# Photo Slideshow for Android TV
