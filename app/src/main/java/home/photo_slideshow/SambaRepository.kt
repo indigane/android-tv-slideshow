@@ -6,6 +6,7 @@ import com.hierynomus.smbj.auth.AuthenticationContext
 import com.hierynomus.smbj.connection.Connection
 import com.hierynomus.smbj.session.Session
 import com.hierynomus.smbj.share.DiskShare
+import home.photo_slideshow.model.SambaFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -50,12 +51,14 @@ class SambaRepository {
 
     suspend fun fetchPhotoList(
         path: String
-    ): Result<List<String>> {
+    ): Result<List<SambaFile>> {
         return withContext(Dispatchers.IO) {
             try {
-                val photoList = mutableListOf<String>()
+                val photoList = mutableListOf<SambaFile>()
                 val root = if (path.isEmpty()) "" else path
-                recursiveSearch(root, photoList)
+                share?.let {
+                    recursiveSearch(it, root, photoList)
+                }
                 Result.success(photoList)
             } catch (e: Exception) {
                 Log.e("SambaRepository", "Error fetching photo list", e)
@@ -64,38 +67,19 @@ class SambaRepository {
         }
     }
 
-    private fun recursiveSearch(path: String, photoList: MutableList<String>) {
-        share?.let {
-            for (fileId in it.list(path)) {
-                val fileName = fileId.fileName
-                val newPath = if (path.isEmpty()) fileName else "$path/$fileName"
-                if (fileId.fileAttributes and 16L > 0) { // DIRECTORY
-                    if (fileName != "." && fileName != "..") {
-                        recursiveSearch(newPath, photoList)
-                    }
-                } else {
-                    if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
-                        photoList.add(newPath)
-                    }
+    private fun recursiveSearch(share: DiskShare, path: String, photoList: MutableList<SambaFile>) {
+        for (fileId in share.list(path)) {
+            val fileName = fileId.fileName
+            val newPath = if (path.isEmpty()) fileName else "$path/$fileName"
+            if (fileId.fileAttributes and 16L > 0) { // DIRECTORY
+                if (fileName != "." && fileName != "..") {
+                    recursiveSearch(share, newPath, photoList)
+                }
+            } else {
+                if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
+                    photoList.add(SambaFile(share, newPath))
                 }
             }
-        }
-    }
-
-    fun getInputStream(path: String): InputStream? {
-        return try {
-            val file = share?.openFile(
-                path,
-                setOf(com.hierynomus.msdtyp.AccessMask.GENERIC_READ),
-                null,
-                setOf(com.hierynomus.mssmb2.SMB2ShareAccess.FILE_SHARE_READ),
-                com.hierynomus.mssmb2.SMB2CreateDisposition.FILE_OPEN,
-                null
-            )
-            file?.inputStream
-        } catch (e: Exception) {
-            Log.e("SambaRepository", "Error getting input stream", e)
-            null
         }
     }
 }

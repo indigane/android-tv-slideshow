@@ -35,7 +35,7 @@ class MainActivity : FragmentActivity() {
                     repository.fetchPhotoList(path).onSuccess { photoList ->
                         Log.d("SambaApp", "Success! Photos found: ${photoList.size}")
                         val intent = Intent(this@MainActivity, SlideshowActivity::class.java).apply {
-                            putStringArrayListExtra("PHOTO_PATHS", ArrayList(photoList))
+                            putParcelableArrayListExtra("PHOTO_FILES", ArrayList(photoList))
                         }
                         startActivity(intent)
                     }.onFailure { error ->

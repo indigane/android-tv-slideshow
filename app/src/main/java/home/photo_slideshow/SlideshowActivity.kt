@@ -1,9 +1,11 @@
 package home.photo_slideshow
 
+import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
+import home.photo_slideshow.model.SambaFile
 
 class SlideshowActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -11,11 +13,16 @@ class SlideshowActivity : FragmentActivity() {
         setContentView(R.layout.activity_slideshow)
 
         val imageView: ImageView = findViewById(R.id.slideshow_image)
-        val photoPaths = intent.getStringArrayListExtra("PHOTO_PATHS")
+        val photoFiles = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableArrayListExtra("PHOTO_FILES", SambaFile::class.java)
+        } else {
+            intent.getParcelableArrayListExtra("PHOTO_FILES")
+        }
 
-        if (photoPaths != null && photoPaths.isNotEmpty()) {
+
+        if (photoFiles != null && photoFiles.isNotEmpty()) {
             Glide.with(this)
-                .load(photoPaths[0])
+                .load(photoFiles[0])
                 .into(imageView)
         }
     }
