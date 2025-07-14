@@ -6,13 +6,23 @@ import com.bumptech.glide.load.data.DataFetcher
 import home.photo_slideshow.model.SambaFile
 import java.io.InputStream
 
-class SambaFileDataFetcher(private val model: SambaFile) : DataFetcher<InputStream> {
+import home.photo_slideshow.ISambaRepository
+import home.photo_slideshow.SambaRepository
+
+class SambaFileDataFetcher(val model: SambaFile, val repository: ISambaRepository) :
+    DataFetcher<InputStream> {
 
     private var stream: InputStream? = null
 
     override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
+        val share = repository.getShare()
+        if (share == null) {
+            callback.onLoadFailed(Exception("Samba share is not connected"))
+            return
+        }
+
         try {
-            val file = model.share.openFile(
+            val file = share.openFile(
                 model.path,
                 setOf(com.hierynomus.msdtyp.AccessMask.GENERIC_READ),
                 null,

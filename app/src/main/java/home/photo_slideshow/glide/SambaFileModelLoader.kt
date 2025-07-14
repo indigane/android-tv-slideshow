@@ -8,7 +8,10 @@ import com.bumptech.glide.signature.ObjectKey
 import home.photo_slideshow.model.SambaFile
 import java.io.InputStream
 
-class SambaFileModelLoader : ModelLoader<SambaFile, InputStream> {
+import home.photo_slideshow.ISambaRepository
+import home.photo_slideshow.SambaRepository
+
+class SambaFileModelLoader(private val repository: ISambaRepository) : ModelLoader<SambaFile, InputStream> {
 
     override fun buildLoadData(
         model: SambaFile,
@@ -16,7 +19,7 @@ class SambaFileModelLoader : ModelLoader<SambaFile, InputStream> {
         height: Int,
         options: Options
     ): ModelLoader.LoadData<InputStream>? {
-        return ModelLoader.LoadData(ObjectKey(model.path), SambaFileDataFetcher(model))
+        return ModelLoader.LoadData(ObjectKey(model.path), SambaFileDataFetcher(model, repository))
     }
 
     override fun handles(model: SambaFile): Boolean {
@@ -25,7 +28,7 @@ class SambaFileModelLoader : ModelLoader<SambaFile, InputStream> {
 
     class Factory : ModelLoaderFactory<SambaFile, InputStream> {
         override fun build(multiFactory: MultiModelLoaderFactory): ModelLoader<SambaFile, InputStream> {
-            return SambaFileModelLoader()
+            return SambaFileModelLoader(SambaRepository.getInstance())
         }
 
         override fun teardown() {

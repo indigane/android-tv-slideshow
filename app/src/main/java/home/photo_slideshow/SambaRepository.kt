@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 
-class SambaRepository {
+class SambaRepository : ISambaRepository {
 
     private var connection: Connection? = null
     private var session: Session? = null
@@ -19,20 +19,20 @@ class SambaRepository {
 
     companion object {
         @Volatile
-        private var INSTANCE: SambaRepository? = null
+        private var INSTANCE: ISambaRepository? = null
 
-        fun getInstance(): SambaRepository =
+        fun getInstance(): ISambaRepository =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: SambaRepository().also { INSTANCE = it }
             }
     }
 
-    suspend fun connect(
+    override suspend fun connect(
         server: String,
         shareName: String,
         user: String,
         pass: String,
-        port: Int = 445
+        port: Int
     ): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
@@ -49,7 +49,7 @@ class SambaRepository {
         }
     }
 
-    suspend fun fetchPhotoList(
+    override suspend fun fetchPhotoList(
         path: String
     ): Result<List<SambaFile>> {
         return withContext(Dispatchers.IO) {
@@ -77,9 +77,13 @@ class SambaRepository {
                 }
             } else {
                 if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
-                    photoList.add(SambaFile(share, newPath))
+                    photoList.add(SambaFile(newPath))
                 }
             }
         }
+    }
+
+    override fun getShare(): DiskShare? {
+        return share
     }
 }

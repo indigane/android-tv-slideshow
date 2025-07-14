@@ -117,7 +117,7 @@ dependencies {
 
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:2.28.2")
+    testImplementation("org.mockito:mockito-inline:4.5.1")
     testImplementation("org.robolectric:robolectric:4.12.1")
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("androidx.test.ext:junit:1.1.5")
