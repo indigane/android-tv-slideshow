@@ -1,10 +1,12 @@
 package home.photo_slideshow
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,19 +17,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val serverInput: EditText = findViewById(R.id.server_input)
-        val shareInput: EditText = findViewById(R.id.share_input)
-        val usernameInput: EditText = findViewById(R.id.username_input)
-        val passwordInput: EditText = findViewById(R.id.password_input)
-        val pathInput: EditText = findViewById(R.id.path_input)
         val connectButton: Button = findViewById(R.id.connect_button)
 
         connectButton.setOnClickListener {
-            val server = serverInput.text.toString()
-            val share = shareInput.text.toString()
-            val user = usernameInput.text.toString()
-            val pass = passwordInput.text.toString()
-            val path = pathInput.text.toString()
+            val sharedPreferences = getSharedPreferences("samba_settings", Context.MODE_PRIVATE)
+            val server = sharedPreferences.getString("server", "") ?: ""
+            val share = sharedPreferences.getString("share", "") ?: ""
+            val user = sharedPreferences.getString("username", "") ?: ""
+            val pass = sharedPreferences.getString("password", "") ?: ""
+            val path = sharedPreferences.getString("path", "") ?: ""
+
+            if (server.isEmpty() || share.isEmpty()) {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return@setOnClickListener
+            }
 
             val repository = SambaRepository.getInstance()
             CoroutineScope(Dispatchers.Main).launch {
@@ -45,6 +48,21 @@ class MainActivity : AppCompatActivity() {
                     Log.e("SambaApp", "Error connecting to share", error)
                 }
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
