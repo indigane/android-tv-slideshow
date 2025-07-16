@@ -3,43 +3,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".SettingsActivity">
 
-    <EditText
-        android:id="@+id/server_input"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Server Address" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
-    <EditText
-        android:id="@+id/share_input"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Share Name" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <EditText
-        android:id="@+id/username_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Username" />
+        <EditText
+            android:id="@+id/server_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Server Address" />
 
-    <EditText
-        android:id="@+id/password_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword" />
-    <EditText
-        android:id="@+id/path_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Starting Path (optional)" />
+        <EditText
+            android:id="@+id/share_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Share Name" />
 
-    <Button
-        android:id="@+id/save_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save" />
+        <EditText
+            android:id="@+id/username_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username" />
+
+        <EditText
+            android:id="@+id/password_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/path_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Starting Path (optional)" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save" />
+    </LinearLayout>
 
 </LinearLayout>
