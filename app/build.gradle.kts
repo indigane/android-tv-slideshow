@@ -14,6 +14,8 @@ fun getMinutesSinceEpoch(): Int {
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 fun getGitUserSuffix(): String {
@@ -71,6 +73,14 @@ android {
             isMinifyEnabled = false
         }
     }
+    testOptions {
+        unitTests.all {
+            it.jvmArgs = listOf(
+                "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED"
+            )
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8 // Or JavaVersion.VERSION_17 if preferred
         targetCompatibility = JavaVersion.VERSION_1_8 // Or JavaVersion.VERSION_17
@@ -81,6 +91,12 @@ android {
     buildFeatures {
         viewBinding = true // Enable ViewBinding for easier UI interaction
     }
+    packaging {
+        resources {
+            // Exclude duplicate file found in bcprov-jdk18on and jspecify dependencies.
+            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+        }
+    }
 }
 
 dependencies {
@@ -89,16 +105,22 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
 
     // For modern SMB (Samba) connectivity
-    implementation("com.hierynomus:smbj:0.11.5")
+    implementation("com.hierynomus:smbj:0.14.0")
 
     // For efficient image loading and caching
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
+
 
     // Android TV Leanback library for UI components and themes
-    implementation("androidx.leanback:leanback:1.0.0")
+    implementation("androidx.leanback:leanback:1.2.0")
 
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-inline:4.5.1")
+    testImplementation("org.robolectric:robolectric:4.12.1")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

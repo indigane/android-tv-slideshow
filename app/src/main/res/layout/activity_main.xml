@@ -31,6 +31,12 @@
         android:hint="Password"
         android:inputType="textPassword" />
 
+    <EditText
+        android:id="@+id/path_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Starting Path (optional)" />
+
     <Button
         android:id="@+id/connect_button"
         android:layout_width="wrap_content"
