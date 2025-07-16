@@ -3,11 +3,11 @@ package home.photo_slideshow
 import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import home.photo_slideshow.model.SambaFile
 
-class SlideshowActivity : FragmentActivity() {
+class SlideshowActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_slideshow)
