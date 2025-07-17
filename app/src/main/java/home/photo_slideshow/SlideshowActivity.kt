@@ -24,6 +24,7 @@ class SlideshowActivity : AppCompatActivity() {
     private var activeImageView = 1
     private var showProgressBar = true
     private var progressAnimator: ObjectAnimator? = null
+    private var photoDuration = 5000L
 
     private val slideshowRunnable = object : Runnable {
         override fun run() {
@@ -52,7 +53,7 @@ class SlideshowActivity : AppCompatActivity() {
                     startProgressBarAnimation()
                 }
 
-                handler.postDelayed(this, 5000)
+                handler.postDelayed(this, photoDuration)
             }
         }
     }
@@ -63,6 +64,7 @@ class SlideshowActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("samba_settings", Context.MODE_PRIVATE)
         showProgressBar = sharedPreferences.getBoolean("show_progress_bar", true)
+        photoDuration = sharedPreferences.getInt("duration", 5).toLong() * 1000
 
         imageView1 = findViewById(R.id.slideshow_image_1)
         imageView2 = findViewById(R.id.slideshow_image_2)
@@ -85,7 +87,7 @@ class SlideshowActivity : AppCompatActivity() {
             if (showProgressBar) {
                 startProgressBarAnimation()
             }
-            handler.postDelayed(slideshowRunnable, 5000)
+            handler.postDelayed(slideshowRunnable, photoDuration)
         }
     }
 
@@ -93,7 +95,7 @@ class SlideshowActivity : AppCompatActivity() {
         progressAnimator?.cancel()
         progressBar.progress = 0
         progressAnimator = ObjectAnimator.ofInt(progressBar, "progress", 0, 100).apply {
-            duration = 5000
+            duration = photoDuration
             start()
         }
     }

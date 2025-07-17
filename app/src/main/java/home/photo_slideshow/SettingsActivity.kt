@@ -22,6 +22,7 @@ class SettingsActivity : AppCompatActivity() {
         val usernameInput: EditText = findViewById(R.id.username_input)
         val passwordInput: EditText = findViewById(R.id.password_input)
         val pathInput: EditText = findViewById(R.id.path_input)
+        val durationInput: EditText = findViewById(R.id.duration_input)
         val progressBarSwitch: SwitchCompat = findViewById(R.id.progress_bar_switch)
         val saveButton: Button = findViewById(R.id.save_button)
 
@@ -31,6 +32,7 @@ class SettingsActivity : AppCompatActivity() {
         usernameInput.setText(sharedPreferences.getString("username", ""))
         passwordInput.setText(sharedPreferences.getString("password", ""))
         pathInput.setText(sharedPreferences.getString("path", ""))
+        durationInput.setText(sharedPreferences.getInt("duration", 5).toString())
         progressBarSwitch.isChecked = sharedPreferences.getBoolean("show_progress_bar", true)
 
         saveButton.setOnClickListener {
@@ -40,6 +42,7 @@ class SettingsActivity : AppCompatActivity() {
             editor.putString("username", usernameInput.text.toString())
             editor.putString("password", passwordInput.text.toString())
             editor.putString("path", pathInput.text.toString())
+            editor.putInt("duration", durationInput.text.toString().toIntOrNull() ?: 5)
             editor.putBoolean("show_progress_bar", progressBarSwitch.isChecked)
             editor.apply()
             finish()
