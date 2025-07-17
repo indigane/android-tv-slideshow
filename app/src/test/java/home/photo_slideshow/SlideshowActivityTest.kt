@@ -21,6 +21,8 @@ import org.robolectric.shadows.ShadowApplication
 import org.robolectric.shadows.ShadowLooper
 import java.time.Duration
 import org.robolectric.annotation.LooperMode
+import android.content.Context
+import android.widget.ProgressBar
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [28], application = Application::class)
@@ -28,26 +30,44 @@ import org.robolectric.annotation.LooperMode
 class SlideshowActivityTest {
 
     private lateinit var scenario: ActivityScenario<SlideshowActivity>
-    private lateinit var activity: SlideshowActivity
-    private lateinit var imageView1: ImageView
-    private lateinit var imageView2: ImageView
+    private lateinit var progressBar: ProgressBar
 
-    @Before
-    fun setUp() {
-        activity = SlideshowActivity()
+    @Test
+    fun testProgressBarIsVisibleByDefault() {
+        val photos = arrayListOf(SambaFile("smb://server/share/photo1.jpg"))
+        val intent = ApplicationProvider.getApplicationContext<Context>().let {
+            android.content.Intent(it, SlideshowActivity::class.java).apply {
+                putParcelableArrayListExtra("PHOTO_FILES", photos)
+            }
+        }
+
+        scenario = ActivityScenario.launch(intent)
+        scenario.onActivity { activity ->
+            progressBar = activity.findViewById(R.id.slideshow_progress_bar)
+            assert(progressBar.visibility == View.VISIBLE)
+        }
     }
 
     @Test
-    fun testSlideshowSwapsImageViews() {
+    fun testProgressBarIsHiddenWhenSettingIsDisabled() {
+        val photos = arrayListOf(SambaFile("smb://server/share/photo1.jpg"))
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val sharedPreferences = context.getSharedPreferences("samba_settings", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putBoolean("show_progress_bar", false)
+            commit()
+        }
 
-        val photos = arrayListOf(
-            SambaFile("smb://server/share/photo1.jpg"),
-            SambaFile("smb://server/share/photo2.jpg")
-        )
-        activity.intent.putParcelableArrayListExtra("PHOTO_FILES", photos)
+        val intent = context.let {
+            android.content.Intent(it, SlideshowActivity::class.java).apply {
+                putParcelableArrayListExtra("PHOTO_FILES", photos)
+            }
+        }
 
-        // Initially, imageView1 is visible and imageView2 is gone
-        assert(imageView1.visibility == View.VISIBLE)
-        assert(imageView2.visibility == View.GONE)
+        scenario = ActivityScenario.launch(intent)
+        scenario.onActivity { activity ->
+            progressBar = activity.findViewById(R.id.slideshow_progress_bar)
+            assert(progressBar.visibility == View.GONE)
+        }
     }
 }

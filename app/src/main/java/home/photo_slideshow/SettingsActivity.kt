@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 
 class SettingsActivity : AppCompatActivity() {
@@ -21,6 +22,7 @@ class SettingsActivity : AppCompatActivity() {
         val usernameInput: EditText = findViewById(R.id.username_input)
         val passwordInput: EditText = findViewById(R.id.password_input)
         val pathInput: EditText = findViewById(R.id.path_input)
+        val progressBarSwitch: SwitchCompat = findViewById(R.id.progress_bar_switch)
         val saveButton: Button = findViewById(R.id.save_button)
 
         val sharedPreferences = getSharedPreferences("samba_settings", Context.MODE_PRIVATE)
@@ -29,6 +31,7 @@ class SettingsActivity : AppCompatActivity() {
         usernameInput.setText(sharedPreferences.getString("username", ""))
         passwordInput.setText(sharedPreferences.getString("password", ""))
         pathInput.setText(sharedPreferences.getString("path", ""))
+        progressBarSwitch.isChecked = sharedPreferences.getBoolean("show_progress_bar", true)
 
         saveButton.setOnClickListener {
             val editor = sharedPreferences.edit()
@@ -37,6 +40,7 @@ class SettingsActivity : AppCompatActivity() {
             editor.putString("username", usernameInput.text.toString())
             editor.putString("password", passwordInput.text.toString())
             editor.putString("path", pathInput.text.toString())
+            editor.putBoolean("show_progress_bar", progressBarSwitch.isChecked)
             editor.apply()
             finish()
         }
