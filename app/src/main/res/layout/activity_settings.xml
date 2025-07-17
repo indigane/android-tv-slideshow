@@ -51,6 +51,19 @@
             android:layout_height="wrap_content"
             android:hint="Starting Path (optional)" />
 
+        <EditText
+            android:id="@+id/duration_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Photo Duration (seconds)"
+            android:inputType="number" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/progress_bar_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Show Progress Bar" />
+
         <Button
             android:id="@+id/save_button"
             android:layout_width="wrap_content"
