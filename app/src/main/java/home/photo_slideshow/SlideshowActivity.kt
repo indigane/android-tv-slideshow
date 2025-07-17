@@ -36,24 +36,29 @@ class SlideshowActivity : AppCompatActivity() {
 
                 Glide.with(this@SlideshowActivity)
                     .load(photoFiles!![nextPhotoIndex])
+                    .listener(GlideListener(
+                        onResourceReady = {
+                            currentImageView.visibility = View.GONE
+                            nextImageView.visibility = View.VISIBLE
+
+                            activeImageView = if (activeImageView == 1) 2 else 1
+                            currentPhotoIndex = nextPhotoIndex
+
+                            val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
+                            Glide.with(this@SlideshowActivity)
+                                .load(photoFiles!![nextNextPhotoIndex])
+                                .preload()
+
+                            if (showProgressBar) {
+                                startProgressBarAnimation()
+                            }
+                            handler.postDelayed(this, photoDuration)
+                        },
+                        onLoadFailed = {
+                            handler.postDelayed(this, 100) // Small delay before trying next
+                        }
+                    ))
                     .into(nextImageView)
-
-                currentImageView.visibility = View.GONE
-                nextImageView.visibility = View.VISIBLE
-
-                activeImageView = if (activeImageView == 1) 2 else 1
-                currentPhotoIndex = nextPhotoIndex
-
-                val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
-                Glide.with(this@SlideshowActivity)
-                    .load(photoFiles!![nextNextPhotoIndex])
-                    .preload()
-
-                if (showProgressBar) {
-                    startProgressBarAnimation()
-                }
-
-                handler.postDelayed(this, photoDuration)
             }
         }
     }
