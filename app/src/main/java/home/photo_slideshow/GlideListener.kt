@@ -8,7 +8,8 @@ import com.bumptech.glide.request.target.Target
 
 class GlideListener(
     private val onResourceReady: () -> Unit,
-    private val onLoadFailed: () -> Unit
+    private val onLoadFailed: () -> Unit,
+    private val latch: java.util.concurrent.CountDownLatch? = null
 ) : RequestListener<Drawable> {
 
     override fun onLoadFailed(
@@ -18,6 +19,7 @@ class GlideListener(
         isFirstResource: Boolean
     ): Boolean {
         onLoadFailed()
+        latch?.countDown()
         return false
     }
 
@@ -29,6 +31,7 @@ class GlideListener(
         isFirstResource: Boolean
     ): Boolean {
         onResourceReady()
+        latch?.countDown()
         return false
     }
 }
