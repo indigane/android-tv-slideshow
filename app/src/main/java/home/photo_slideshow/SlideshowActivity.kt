@@ -2,7 +2,6 @@ package home.photo_slideshow
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,7 +11,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestListener
 import home.photo_slideshow.model.SambaFile
 
 class SlideshowActivity : AppCompatActivity() {
@@ -27,6 +25,7 @@ class SlideshowActivity : AppCompatActivity() {
     private var showProgressBar = true
     private var progressAnimator: ObjectAnimator? = null
     private var photoDuration = 5000L
+
     private val slideshowRunnable = object : Runnable {
         override fun run() {
             if (photoFiles != null && photoFiles!!.isNotEmpty()) {
@@ -36,7 +35,7 @@ class SlideshowActivity : AppCompatActivity() {
                 val nextImageView = if (activeImageView == 1) imageView2 else imageView1
 
                 Glide.with(this@SlideshowActivity)
-                    .load(photoFiles!![currentPhotoIndex])
+                    .load(photoFiles!![nextPhotoIndex])
                     .listener(GlideListener(
                         onResourceReady = {
                             currentImageView.visibility = View.GONE
@@ -87,7 +86,20 @@ class SlideshowActivity : AppCompatActivity() {
         }
 
         if (photoFiles != null && photoFiles!!.isNotEmpty()) {
-            handler.post(slideshowRunnable)
+            Glide.with(this)
+                .load(photoFiles!![0])
+                .listener(GlideListener(
+                    onResourceReady = {
+                        if (showProgressBar) {
+                            startProgressBarAnimation()
+                        }
+                        handler.postDelayed(slideshowRunnable, photoDuration)
+                    },
+                    onLoadFailed = {
+                        handler.postDelayed(slideshowRunnable, 100) // Small delay before trying next
+                    }
+                ))
+                .into(imageView1)
         }
     }
 
