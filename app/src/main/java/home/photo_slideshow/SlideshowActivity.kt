@@ -26,43 +26,6 @@ class SlideshowActivity : AppCompatActivity() {
     private var progressAnimator: ObjectAnimator? = null
     private var photoDuration = 5000L
 
-    private val slideshowRunnable = object : Runnable {
-        override fun run() {
-            if (photoFiles != null && photoFiles!!.isNotEmpty()) {
-                val nextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
-
-                val currentImageView = if (activeImageView == 1) imageView1 else imageView2
-                val nextImageView = if (activeImageView == 1) imageView2 else imageView1
-
-                Glide.with(this@SlideshowActivity)
-                    .load(photoFiles!![nextPhotoIndex])
-                    .listener(GlideListener(
-                        onResourceReady = {
-                            currentImageView.visibility = View.GONE
-                            nextImageView.visibility = View.VISIBLE
-
-                            activeImageView = if (activeImageView == 1) 2 else 1
-                            currentPhotoIndex = nextPhotoIndex
-
-                            val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
-                            Glide.with(this@SlideshowActivity)
-                                .load(photoFiles!![nextNextPhotoIndex])
-                                .preload()
-
-                            if (showProgressBar) {
-                                startProgressBarAnimation()
-                            }
-                            handler.postDelayed(this, photoDuration)
-                        },
-                        onLoadFailed = {
-                            handler.postDelayed(this, 100) // Small delay before trying next
-                        }
-                    ))
-                    .into(nextImageView)
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_slideshow)
@@ -93,14 +56,52 @@ class SlideshowActivity : AppCompatActivity() {
                         if (showProgressBar) {
                             startProgressBarAnimation()
                         }
-                        handler.postDelayed(slideshowRunnable, photoDuration)
+                        handler.postDelayed({ showNextPhoto() }, photoDuration)
                     },
                     onLoadFailed = {
-                        handler.postDelayed(slideshowRunnable, 100) // Small delay before trying next
+                        // Consider showing an error message or stopping the slideshow
                     }
                 ))
                 .into(imageView1)
         }
+    }
+
+    private fun showNextPhoto() {
+        if (photoFiles == null || photoFiles!!.isEmpty()) {
+            return
+        }
+
+        val nextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
+        val currentImageView = if (activeImageView == 1) imageView1 else imageView2
+        val nextImageView = if (activeImageView == 1) imageView2 else imageView1
+
+        Glide.with(this)
+            .load(photoFiles!![nextPhotoIndex])
+            .listener(GlideListener(
+                onResourceReady = {
+                    currentImageView.visibility = View.GONE
+                    nextImageView.visibility = View.VISIBLE
+
+                    activeImageView = if (activeImageView == 1) 2 else 1
+                    currentPhotoIndex = nextPhotoIndex
+
+                    // Preload the photo after the next one
+                    val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
+                    Glide.with(this@SlideshowActivity)
+                        .load(photoFiles!![nextNextPhotoIndex])
+                        .preload()
+
+                    if (showProgressBar) {
+                        startProgressBarAnimation()
+                    }
+                    handler.postDelayed({ showNextPhoto() }, photoDuration)
+                },
+                onLoadFailed = {
+                    // Skip to the next photo after a short delay
+                    handler.postDelayed({ showNextPhoto() }, 100)
+                }
+            ))
+            .into(nextImageView)
     }
 
     private fun startProgressBarAnimation() {
@@ -114,7 +115,7 @@ class SlideshowActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(slideshowRunnable)
+        handler.removeCallbacksAndMessages(null)
         progressAnimator?.cancel()
     }
 }
