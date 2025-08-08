@@ -85,12 +85,6 @@ class SlideshowActivity : AppCompatActivity() {
                     activeImageView = if (activeImageView == 1) 2 else 1
                     currentPhotoIndex = nextPhotoIndex
 
-                    // Preload the photo after the next one
-                    val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
-                    Glide.with(this@SlideshowActivity)
-                        .load(photoFiles!![nextNextPhotoIndex])
-                        .preload()
-
                     if (showProgressBar) {
                         startProgressBarAnimation()
                     }
