@@ -10,7 +10,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import home.photo_slideshow.model.SambaFile
 
 class SlideshowActivity : AppCompatActivity() {
@@ -25,38 +28,6 @@ class SlideshowActivity : AppCompatActivity() {
     private var showProgressBar = true
     private var progressAnimator: ObjectAnimator? = null
     private var photoDuration = 5000L
-
-    private val slideshowRunnable = object : Runnable {
-        override fun run() {
-            if (photoFiles != null && photoFiles!!.isNotEmpty()) {
-                val nextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
-
-                val currentImageView = if (activeImageView == 1) imageView1 else imageView2
-                val nextImageView = if (activeImageView == 1) imageView2 else imageView1
-
-                Glide.with(this@SlideshowActivity)
-                    .load(photoFiles!![nextPhotoIndex])
-                    .into(nextImageView)
-
-                currentImageView.visibility = View.GONE
-                nextImageView.visibility = View.VISIBLE
-
-                activeImageView = if (activeImageView == 1) 2 else 1
-                currentPhotoIndex = nextPhotoIndex
-
-                val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
-                Glide.with(this@SlideshowActivity)
-                    .load(photoFiles!![nextNextPhotoIndex])
-                    .preload()
-
-                if (showProgressBar) {
-                    startProgressBarAnimation()
-                }
-
-                handler.postDelayed(this, photoDuration)
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,12 +54,80 @@ class SlideshowActivity : AppCompatActivity() {
         if (photoFiles != null && photoFiles!!.isNotEmpty()) {
             Glide.with(this)
                 .load(photoFiles!![0])
-                .into(imageView1)
-            if (showProgressBar) {
-                startProgressBarAnimation()
-            }
-            handler.postDelayed(slideshowRunnable, photoDuration)
+                .into(object : CustomTarget<Drawable>() {
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        imageView1.setImageDrawable(resource)
+                        if (showProgressBar) {
+                            startProgressBarAnimation()
+                        }
+                        handler.postDelayed({ showNextPhoto() }, photoDuration)
+
+                        // Preload the next photo
+                        if (photoFiles!!.size > 1) {
+                            Glide.with(this@SlideshowActivity)
+                                .load(photoFiles!![1])
+                                .preload()
+                        }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        imageView1.setImageDrawable(placeholder)
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        // Consider showing an error message or stopping the slideshow
+                    }
+                })
         }
+    }
+
+    private fun showNextPhoto() {
+        if (photoFiles == null || photoFiles!!.isEmpty()) {
+            return
+        }
+
+        val nextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
+        val currentImageView = if (activeImageView == 1) imageView1 else imageView2
+        val nextImageView = if (activeImageView == 1) imageView2 else imageView1
+
+        Glide.with(this)
+            .load(photoFiles!![nextPhotoIndex])
+            .into(object : CustomTarget<Drawable>() {
+                override fun onResourceReady(
+                    resource: Drawable,
+                    transition: Transition<in Drawable>?
+                ) {
+                    nextImageView.setImageDrawable(resource)
+                    currentImageView.visibility = View.GONE
+                    nextImageView.visibility = View.VISIBLE
+
+                    activeImageView = if (activeImageView == 1) 2 else 1
+                    currentPhotoIndex = nextPhotoIndex
+
+                    if (showProgressBar) {
+                        startProgressBarAnimation()
+                    }
+                    handler.postDelayed({ showNextPhoto() }, photoDuration)
+
+                    // Preload the photo after the next one
+                    val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
+                    Glide.with(this@SlideshowActivity)
+                        .load(photoFiles!![nextNextPhotoIndex])
+                        .preload()
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    nextImageView.setImageDrawable(placeholder)
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    // Skip to the next photo after a short delay
+                    handler.postDelayed({ showNextPhoto() }, 100)
+                }
+            })
     }
 
     private fun startProgressBarAnimation() {
@@ -102,7 +141,7 @@ class SlideshowActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(slideshowRunnable)
+        handler.removeCallbacksAndMessages(null)
         progressAnimator?.cancel()
     }
 }
