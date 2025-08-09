@@ -64,6 +64,13 @@ class SlideshowActivity : AppCompatActivity() {
                             startProgressBarAnimation()
                         }
                         handler.postDelayed({ showNextPhoto() }, photoDuration)
+
+                        // Preload the next photo
+                        if (photoFiles!!.size > 1) {
+                            Glide.with(this@SlideshowActivity)
+                                .load(photoFiles!![1])
+                                .preload()
+                        }
                     }
 
                     override fun onLoadCleared(placeholder: Drawable?) {
@@ -104,6 +111,12 @@ class SlideshowActivity : AppCompatActivity() {
                         startProgressBarAnimation()
                     }
                     handler.postDelayed({ showNextPhoto() }, photoDuration)
+
+                    // Preload the photo after the next one
+                    val nextNextPhotoIndex = (currentPhotoIndex + 1) % photoFiles!!.size
+                    Glide.with(this@SlideshowActivity)
+                        .load(photoFiles!![nextNextPhotoIndex])
+                        .preload()
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
