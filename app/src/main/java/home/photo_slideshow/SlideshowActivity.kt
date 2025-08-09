@@ -10,7 +10,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import android.graphics.drawable.Drawable
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import home.photo_slideshow.model.SambaFile
 
 class SlideshowActivity : AppCompatActivity() {
@@ -51,18 +54,26 @@ class SlideshowActivity : AppCompatActivity() {
         if (photoFiles != null && photoFiles!!.isNotEmpty()) {
             Glide.with(this)
                 .load(photoFiles!![0])
-                .listener(GlideListener(
-                    onResourceReady = {
+                .into(object : CustomTarget<Drawable>() {
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        transition: Transition<in Drawable>?
+                    ) {
+                        imageView1.setImageDrawable(resource)
                         if (showProgressBar) {
                             startProgressBarAnimation()
                         }
                         handler.postDelayed({ showNextPhoto() }, photoDuration)
-                    },
-                    onLoadFailed = {
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        imageView1.setImageDrawable(placeholder)
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
                         // Consider showing an error message or stopping the slideshow
                     }
-                ))
-                .into(imageView1)
+                })
         }
     }
 
@@ -77,8 +88,12 @@ class SlideshowActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(photoFiles!![nextPhotoIndex])
-            .listener(GlideListener(
-                onResourceReady = {
+            .into(object : CustomTarget<Drawable>() {
+                override fun onResourceReady(
+                    resource: Drawable,
+                    transition: Transition<in Drawable>?
+                ) {
+                    nextImageView.setImageDrawable(resource)
                     currentImageView.visibility = View.GONE
                     nextImageView.visibility = View.VISIBLE
 
@@ -89,13 +104,17 @@ class SlideshowActivity : AppCompatActivity() {
                         startProgressBarAnimation()
                     }
                     handler.postDelayed({ showNextPhoto() }, photoDuration)
-                },
-                onLoadFailed = {
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    nextImageView.setImageDrawable(placeholder)
+                }
+
+                override fun onLoadFailed(errorDrawable: Drawable?) {
                     // Skip to the next photo after a short delay
                     handler.postDelayed({ showNextPhoto() }, 100)
                 }
-            ))
-            .into(nextImageView)
+            })
     }
 
     private fun startProgressBarAnimation() {
