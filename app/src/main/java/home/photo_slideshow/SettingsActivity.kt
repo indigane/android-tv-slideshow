@@ -37,12 +37,12 @@ class SettingsActivity : AppCompatActivity() {
 
         saveButton.setOnClickListener {
             val editor = sharedPreferences.edit()
-            editor.putString("server", serverInput.text.toString())
-            editor.putString("share", shareInput.text.toString())
-            editor.putString("username", usernameInput.text.toString())
-            editor.putString("password", passwordInput.text.toString())
-            editor.putString("path", pathInput.text.toString())
-            editor.putInt("duration", durationInput.text.toString().toIntOrNull() ?: 5)
+            editor.putString("server", serverInput.text.toString().trim())
+            editor.putString("share", shareInput.text.toString().trim())
+            editor.putString("username", usernameInput.text.toString().trim())
+            editor.putString("password", passwordInput.text.toString().trim())
+            editor.putString("path", pathInput.text.toString().trim())
+            editor.putInt("duration", durationInput.text.toString().trim().toIntOrNull() ?: 5)
             editor.putBoolean("show_progress_bar", progressBarSwitch.isChecked)
             editor.apply()
             finish()
