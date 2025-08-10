@@ -114,6 +114,7 @@ dependencies {
 
     // Android TV Leanback library for UI components and themes
     implementation("androidx.leanback:leanback:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
 
     // Testing libraries
     testImplementation("junit:junit:4.13.2")
