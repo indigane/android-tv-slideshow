@@ -40,8 +40,8 @@ android {
         applicationId = "home.photo_slideshow"
         minSdk = 26
         targetSdk = 35
-        versionCode = if (gradle.startParameter.taskNames.any { it.contains("Debug") }) getMinutesSinceEpoch() else 1
-        versionName = "1.0.0"
+        versionCode = if (gradle.startParameter.taskNames.any { it.contains("Debug") }) getMinutesSinceEpoch() else 2
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
