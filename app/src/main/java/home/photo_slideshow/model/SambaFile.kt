@@ -5,5 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class SambaFile(
-    val path: String
+    val path: String,
+    val lastModified: Long
 ) : Parcelable

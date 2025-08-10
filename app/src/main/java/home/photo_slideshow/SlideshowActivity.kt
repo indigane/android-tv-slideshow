@@ -51,6 +51,12 @@ class SlideshowActivity : AppCompatActivity() {
             intent.getParcelableArrayListExtra("PHOTO_FILES")
         }
 
+        val sortOrder = sharedPreferences.getString("sort_order", "oldest_first")
+        when (sortOrder) {
+            "oldest_first" -> photoFiles?.sortBy { it.lastModified }
+            "newest_first" -> photoFiles?.sortByDescending { it.lastModified }
+        }
+
         if (photoFiles != null && photoFiles!!.isNotEmpty()) {
             Glide.with(this)
                 .load(photoFiles!![0])

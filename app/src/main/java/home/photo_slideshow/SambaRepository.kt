@@ -77,7 +77,7 @@ class SambaRepository : ISambaRepository {
                 }
             } else {
                 if (fileName.endsWith(".jpg", true) || fileName.endsWith(".png", true)) {
-                    photoList.add(SambaFile(newPath))
+                    photoList.add(SambaFile(newPath, fileId.lastWriteTime.toEpochMillis()))
                 }
             }
         }

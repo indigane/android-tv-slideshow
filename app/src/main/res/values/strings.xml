@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Photo Slideshow</string>
+    <string name="sort_order_title">Sort Order</string>
+    <string-array name="sort_order_entries">
+        <item>Off</item>
+        <item>Oldest First</item>
+        <item>Newest First</item>
+    </string-array>
+    <string-array name="sort_order_values">
+        <item>off</item>
+        <item>oldest_first</item>
+        <item>newest_first</item>
+    </string-array>
 </resources>
