@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="@string/samba_settings">
+
+        <EditTextPreference
+            android:key="server"
+            android:title="@string/server_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="share"
+            android:title="@string/share_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="username"
+            android:title="@string/username_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="password"
+            android:title="@string/password_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="path"
+            android:title="@string/path_title"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/slideshow_settings">
+
+        <EditTextPreference
+            android:key="duration"
+            android:title="@string/duration_title"
+            android:summary="@string/duration_summary"
+            app:useSimpleSummaryProvider="true"
+            android:dialogMessage="@string/duration_dialog_message"
+            android:defaultValue="5" />
+
+        <ListPreference
+            android:key="sort_order"
+            android:title="@string/sort_order_title"
+            android:entries="@array/sort_order_entries"
+            android:entryValues="@array/sort_order_values"
+            app:useSimpleSummaryProvider="true"
+            android:defaultValue="oldest_first" />
+
+        <SwitchPreferenceCompat
+            android:key="show_progress_bar"
+            android:title="@string/progress_bar_title"
+            android:summary="@string/progress_bar_summary" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

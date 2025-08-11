@@ -11,4 +11,17 @@
         <item>oldest_first</item>
         <item>newest_first</item>
     </string-array>
+
+    <string name="samba_settings">Samba Settings</string>
+    <string name="server_title">Server Address</string>
+    <string name="share_title">Share Name</string>
+    <string name="username_title">Username</string>
+    <string name="password_title">Password</string>
+    <string name="path_title">Starting Path (optional)</string>
+    <string name="slideshow_settings">Slideshow Settings</string>
+    <string name="duration_title">Photo Duration</string>
+    <string name="duration_summary">in seconds</string>
+    <string name="duration_dialog_message">Enter the number of seconds to display each photo.</string>
+    <string name="progress_bar_title">Show Progress Bar</string>
+    <string name="progress_bar_summary">Display a progress bar during the slideshow</string>
 </resources>
