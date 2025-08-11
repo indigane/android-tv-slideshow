@@ -38,14 +38,16 @@
             android:title="@string/duration_title"
             android:summary="@string/duration_summary"
             app:useSimpleSummaryProvider="true"
-            android:dialogMessage="@string/duration_dialog_message" />
+            android:dialogMessage="@string/duration_dialog_message"
+            android:defaultValue="5" />
 
         <ListPreference
             android:key="sort_order"
             android:title="@string/sort_order_title"
             android:entries="@array/sort_order_entries"
             android:entryValues="@array/sort_order_values"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            android:defaultValue="oldest_first" />
 
         <SwitchPreferenceCompat
             android:key="show_progress_bar"
