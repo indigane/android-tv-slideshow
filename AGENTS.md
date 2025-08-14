@@ -1,6 +1,6 @@
 # Android Project – Agent Guidelines
 
-This is an Android project written in Kotlin.
+This is an Android project written in Kotlin. The application targets Android TV. You MUST consider Android TV specific issues such as D-pad navigation.
 
 The project is developed fully online, without access to Android Studio. The debug and release APKs are compiled by GitHub CI.
 
